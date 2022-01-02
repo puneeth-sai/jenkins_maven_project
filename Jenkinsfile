@@ -1,12 +1,14 @@
 pipeline {
     agent any 
     stages {
-        stage('clean compile') { 
+        stage('Clean') { 
             steps {
-
-                sh "mvn clean"
-                sh "mvncompile"
-
+                sh "mvn clean"      
+            }
+        }
+         stage('Compile') { 
+            steps {
+                sh "mvn compile"      
             }
         }
         stage('Test') { 
@@ -16,13 +18,12 @@ pipeline {
         }
         stage('Deploy') { 
             steps {
-                sh "mvn package" 
+                sh "mvn package"
             }
         }
-
         stage('Archiving') { 
             steps {
-                 archivingArtifacts '**/target/*.jar' 
+                archiveArtifacts '**/target/*.jar'
             }
         }
     }
