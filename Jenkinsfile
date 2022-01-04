@@ -16,7 +16,7 @@ pipeline {
                 sh "mvn test"
             }
         }
-        stage('Deploy') { 
+        stage('build') { 
             steps {
                 sh "mvn package"
             }
@@ -26,5 +26,19 @@ pipeline {
                 archiveArtifacts '**/target/*.jar'
             }
         }
+        stage('deploy') { 
+            steps {
+                 sshagent(['tomcat-new']) {
+                sh """
+                    scp -o StrictHostKeyChecking=no target/myweb.war  ec2-user@13.235.247.217:/home/ec2-user/apache-tomcat-9.0.56/webapps/
+                    
+                    ssh ec2-user@13.235.247.217 /home/ec2-user/apache-tomcat-9.0.56/bin/shutdown.sh
+                    
+                    ssh ec2-user@13.235.247.217 /home/ec2-user/apache-tomcat-9.0.56/bin/startup.sh
+                
+                """
+            }
+        }
+
     }
 }
